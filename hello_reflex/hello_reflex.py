@@ -1,12 +1,38 @@
-"""Welcome to Reflex!."""
-
-from hello_reflex import styles
-
-# Import all the pages.
-from hello_reflex.pages import *
-
 import reflex as rx
 
-# Create the app and compile it.
-app = rx.App(style=styles.base_style)
+class State(rx.State):
+    count: int = 0
+
+    def increment(self):
+        self.count += 1
+
+    def decrement(self):
+        self.count -= 1
+
+def index(): 
+    return rx.vstack(
+      rx.hstack(  
+            rx.button(
+                "Decrement",
+                
+                bg="#fef2f2",
+                color="#b91c1c",
+                border_radius="lg",
+                on_click=State.decrement,
+            ),
+            rx.heading(State.count, font_size="2em"),
+            rx.button(
+                "Increment",
+                bg="#ecfdf5",
+                color="#047857",
+                border_radius="lg",
+                on_click=State.increment,
+            ),
+            spacing="1em",
+        ) 
+    ) 
+   
+
+app = rx.App()
+app.add_page(index)
 app.compile()
