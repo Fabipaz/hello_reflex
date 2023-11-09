@@ -1,37 +1,54 @@
 import reflex as rx
 
-class State(rx.State):
-    count: int = 0
+from hello_reflex import style
+from hello_reflex.state import State
 
-    def increment(self):
-        self.count += 1
 
-    def decrement(self):
-        self.count -= 1
+def qa(question: str, answer: str) -> rx.Component:
+    return rx.box(
+        rx.box(
+            rx.text(question, text_align="right"),
+            style=style.question_style,
+        ),
+        rx.box(
+            rx.text(answer, text_align="left"),
+            style=style.answer_style,
+        ),
+        margin_y="1em",
+    )
 
-def index(): 
-    return rx.vstack(
-      rx.hstack(  
-            rx.button(
-                "Decrement",
-                
-                bg="#fef2f2",
-                color="#b91c1c",
-                border_radius="lg",
-                on_click=State.decrement,
-            ),
-            rx.heading(State.count, font_size="2em"),
-            rx.button(
-                "Increment",
-                bg="#ecfdf5",
-                color="#047857",
-                border_radius="lg",
-                on_click=State.increment,
-            ),
-            spacing="1em",
-        ) 
-    ) 
-   
+
+def chat() -> rx.Component:
+    return rx.box(
+        rx.foreach(
+            State.chat_history,
+            lambda messages: qa(messages[0], messages[1]),
+        )
+    )
+
+
+def action_bar() -> rx.Component:
+    return rx.hstack(
+        rx.input(
+            value=State.question,
+            placeholder="Ask a question",
+            on_change=State.set_question,
+            style=style.input_style,
+        ),
+        rx.button(
+            "Ask",
+            on_click=State.answer,
+            style=style.button_style,
+        ),
+    )
+
+
+def index() -> rx.Component:
+    return rx.container(
+        chat(),
+        action_bar(),
+    )
+
 
 app = rx.App()
 app.add_page(index)
